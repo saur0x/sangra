@@ -10,23 +10,24 @@ BUILDDIR := build
 TARGET := bin/main
 
 SRCEXT := c
-SOURCES := $(shell find $(SRCDIR) -type f -name *.$(SRCEXT))
+SOURCES := $(shell find $(SRCDIR) -type f ! -name test.c -name *.$(SRCEXT))
 OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.o))
-CFLAGS := -g # -Wall
-LIB := # -pthread -lmongoclient -L lib -lboost_thread-mt -lboost_filesystem-mt -lboost_system-mt
-INC := -I include
+CFLAGS := -g -Wall
+LIB :=
+INC := -I include -I src
 
 $(TARGET): $(OBJECTS)
-	@echo " Linking..."
-	@echo " $(CC) $^ -o $(TARGET) $(LIB)"; $(CC) $^ -o $(TARGET) $(LIB)
+	@echo '[+] Linking'
+	$(CC) -o $(TARGET) $^ $(LIB)
 
 $(BUILDDIR)/%.o: $(SRCDIR)/%.$(SRCEXT)
-	@mkdir -p $(BUILDDIR)
-	@echo " $(CC) $(CFLAGS) $(INC) -c -o $@ $<"; $(CC) $(CFLAGS) $(INC) -c -o $@ $<
+	@echo '[+] Compiling'
+	@mkdir -p $(shell dirname $@)
+	$(CC) $(CFLAGS) $(INC) -c -o $@ $<
 
 clean:
-	@echo " Cleaning..."; 
-	@echo " $(RM) -r $(BUILDDIR) $(TARGET)"; $(RM) -r $(BUILDDIR) $(TARGET)
+	@echo '[+] Cleaning'
+	$(RM) -r -- $(BUILDDIR) $(TARGET)
 
 # Tests
 tester:

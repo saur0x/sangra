@@ -1,5 +1,5 @@
 /**
-gcc -Wall -I ../../src -o test test.c ../vector/vector.c ../array/array.c
+gcc -Wall -I ../../src -o test test.c ../vector/vector.c ../array/array.c iterator.c
 ./test
 */
 
@@ -20,7 +20,7 @@ int main(void)
     int ff = 0xFFFF;
 
     size_t member_size = sizeof(int);
-    size_t member_count = 16;
+    size_t member_count = 12;
     size_t capacity = 1;
 
     Vector *vector = vector_with_capacity(NULL, member_size, capacity);
@@ -33,6 +33,7 @@ int main(void)
     for (int i = 0; i < member_count; ++i) {
         printf("%d\n", *(int *) vector_get(vector, i));
     }
+
     putchar('\n');
     printf("%lu\t%lu\n", vector_size(vector), vector_capacity(vector));
 
@@ -47,7 +48,7 @@ int main(void)
         Iterator *it = iterator_new(NULL, vector->array.members, member_size);
         assert(*(int *) iterator_nth(it, 3) == 3);
         assert(*(int *) iterator_nth(it, 4) == 8);
-        free(it);        
+        free(it);
     }
 
     printf("%lu\t%lu\n", vector_size(vector), vector_capacity(vector));

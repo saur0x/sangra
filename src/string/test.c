@@ -55,7 +55,7 @@ int main(void)
         assert(string_size(string) == st_size + size);
 
         string_put(string, stdout);
-        putchar('\n');
+        char_put('\n', stdout);
 
         for (ssize_t i = st_size - 1; i >= 0; --i)
             char_put(string_pop(string), stderr);
@@ -66,71 +66,18 @@ int main(void)
 
     {
         string_get_till(string, stdin, 10, '\n');
-        putchar('|');
+        char_put('|', stdout);
         string_put(string, stdout);
-        putchar('|');
-        vector_truncate(string, 0);
+        char_put('|', stdout);
+        printf("%s", string_as_str(string));
+        char_put('|', stdout);
+        char_put('\n', stdout);
+        string_clear(string);
     }
 
     {
         printf("%lu\t%lu\n", string_size(string), string_capacity(string));
     }
-
-    
-
-    // vector_push(vector, &filler);
-    // assert(filler == *(int *) vector_front(vector));
-    // assert(!vector_empty(vector));
-
-    // vector_push(vector, &filler);
-    // assert(filler == *(int *) vector_get(vector, 1));
-
-    // vector_push(vector, &filler);
-    // vector_set(vector, vector_size(vector) - 1, &new_filler);
-    // assert(new_filler == *(int *) vector_back(vector));
-
-    // vector_resize(vector, 12, &x_filler);
-    // assert(vector_size(vector) == 12);
-
-    // capacity = vector_capacity(vector);
-    // vector_resize_capacity(vector, capacity + 10);
-    // assert(vector_capacity(vector) == capacity + 10);
-
-    // capacity = 32;
-    // vector_reserve(vector, capacity);
-    // assert(vector_capacity(vector) == capacity);
-
-    // capacity = vector_size(vector);
-    // shrink_to_fit(vector);
-    // assert(vector_capacity(vector) == capacity);
-
-    // vector_insert(vector, 1, &ff);
-    // assert(ff == *(int *) vector_get(vector, 1));
-
-    // int back = vector_size(vector) - 1;
-    // vector_insert(vector, back, &ff);
-    // assert(ff == *(int *) vector_get(vector, back));
-
-    // vector_pop(vector);
-
-    // assert(ff == *(int *) vector_back(vector));
-
-    // member_count = vector_size(vector) - 1;
-    // vector_remove(vector, 2);
-    // assert(vector_size(vector) == member_count);
-
-    // capacity = 64;
-    // int delta_capacity = capacity - vector_size(vector);
-    // vector_reserve_additional(vector, delta_capacity);
-    // assert(vector_capacity(vector) == capacity);
-
-    // vector_truncate(vector, 5);
-    // assert(vector_size(vector) == 5);
-
-    // for (size_t i = 0; i < vector_size(vector); ++i)
-    //     printf("%d\n", *(int *) vector_get(vector, i));
-    // printf("Size: %lu\tCapacity: %lu\n", vector_size(vector), vector_capacity(vector));
-    // putchar('\n');
 
     string_free(string);
     assert(string_empty(string));

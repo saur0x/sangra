@@ -9,12 +9,21 @@
 
 struct iterator
 {
+    /// Pointer to the underlying object. It may be needed for other iterators.
     void *object;
-    void *start;
+
+    /// Current position of the iterator.
     void *current;
-    size_t index;
+
+    /// `counter` for the number of times next has been called.
+    size_t counter;
+
+    /// `offset` between elements of iterator / container.
+    /// Negative if reverse iterator, and zero if the elements aren't same size.
     ssize_t offset;
-    uint8_t exhausted;
+
+    /// 0th: if exhausted
+    uint8_t flags;
 };
 
 typedef struct iterator Iterator;
@@ -26,19 +35,7 @@ Returns NULL when exhausted.
 */
 void *iterator_next(struct iterator *self);
 
-// size_t iterator_count(struct iterator *self);
-
-// void *iterator_last(struct iterator *self);
-
-/**
-Returns value equal to `n` on success
-and value less than `n` on failure when iterator is exhausted.
-*/
-// size_t iterator_advance_by(struct iterator *self, size_t n);
-
 void *iterator_nth(struct iterator *self, size_t n);
-
-// ssize_t iterator_size_hint(struct iterator *self);
 
 
 #endif  /* STDC_ITERATOR_H */
