@@ -8,7 +8,7 @@
 #include <string.h>
 #include <assert.h>
 
-#include "utf8/utf8.h"
+#include "utf8.h"
 
 #define CHAR_NULL (-1)
 

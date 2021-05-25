@@ -5,9 +5,9 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "utf8/utf8.h"
-#include "char/char.h"
-#include "vector/vector.h"
+#include "utf8.h"
+#include "char.h"
+#include "vector.h"
 
 
 #define INITIAL_STRING_CAPACITY (64)

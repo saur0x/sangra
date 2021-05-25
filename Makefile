@@ -14,7 +14,8 @@ SOURCES := $(shell find $(SRCDIR) -type f ! -name test.c -name *.$(SRCEXT))
 OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.o))
 CFLAGS := -g -Wall
 LIB :=
-INC := -I include -I src
+# INC := -I include -I src
+INC := -iquote ./include
 
 $(TARGET): $(OBJECTS)
 	@echo '[+] Linking'

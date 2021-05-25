@@ -1,8 +1,8 @@
 #include <stdio.h>
 
-#include "char/char.h"
-#include "string/chars.h"
-#include "string/string.h"
+#include "char.h"
+#include "chars.h"
+#include "string.h"
 
 
 int main(void)

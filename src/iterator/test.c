@@ -9,7 +9,7 @@ gcc -Wall -I ../../src -o test test.c ../vector/vector.c ../array/array.c iterat
 #include <assert.h>
 
 #include "iterator.h"
-#include "vector/vector.h"
+#include "vector.h"
 
 
 int main(void)

@@ -8,7 +8,7 @@ echo -n 'न' | ./test
 #include <assert.h>
 
 #include "char.h"
-#include "utf8/utf8.h"
+#include "utf8.h"
 
 
 int main(void)

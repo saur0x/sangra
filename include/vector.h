@@ -2,7 +2,7 @@
 #define STDC_VECTOR_H
 
 
-#include "array/array.h"
+#include "array.h"
 
 
 #define INITIAL_VECTOR_CAPACITY (64)

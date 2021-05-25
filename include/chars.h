@@ -1,10 +1,10 @@
 #ifndef STDC_CHARS_H
 #define STDC_CHARS_H
 
-#include "utf8/utf8.h"
-#include "char/char.h"
-#include "string/string.h"
-#include "iterator/iterator.h"
+#include "utf8.h"
+#include "char.h"
+#include "string.h"
+#include "iterator.h"
 
 
 /**
