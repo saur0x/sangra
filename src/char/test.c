@@ -17,7 +17,12 @@ int main(void)
     // char raw[4] = "д"; Char code_point = 1076;
     char raw[4] = "न"; Char code_point = 2344;
     uint8_t *uraw = (uint8_t *) raw;
-    Char c = char_get(stdin);
+
+    #ifndef AUTOMATIC_TESTING
+        Char c = char_get(stdin);
+    #else
+        Char c = char_read("न");
+    #endif
     assert(c == utf8_decode(utf8_u8_to_u32(uraw)));
 
     char_put(c, stdout);

@@ -1,21 +1,27 @@
-#
-# TODO: Move `libmongoclient.a` to /usr/local/lib so this can work on production servers
-#
-
-CC := gcc # This is the main compiler
-# CC := clang --analyze # and comment out the linker last line for sanity
+# This is the main compiler
+CC := gcc
+# and comment out the linker last line for sanity
+# CC := clang --analyze
 
 SRCDIR := src
 BUILDDIR := build
+
 TARGET := bin/main
+TESTTARGET := bin/test
 
 SRCEXT := c
+
+# Ignore test.c files and any files starting with an underscore.
 SOURCES := $(shell find $(SRCDIR) -type f ! -name test.c ! -name '_*' -name *.$(SRCEXT))
 OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.o))
+
+TESTS := $(shell find $(SRCDIR) -name test.$(SRCEXT))
+
 CFLAGS := -g -Wall
+TESTFLAGS := -D AUTOMATIC_TESTING
+
 LIB :=
-# INC := -I include -I src
-INC := -iquote ./include
+INC := -iquote include
 
 $(TARGET): $(OBJECTS)
 	@echo '[+] Linking'
@@ -28,7 +34,15 @@ $(BUILDDIR)/%.o: $(SRCDIR)/%.$(SRCEXT)
 
 clean:
 	@echo '[+] Cleaning'
-	$(RM) -r -- $(BUILDDIR) $(TARGET)
+	$(RM) -rf -- $(BUILDDIR) $(TARGET)
+
+test: $(OBJECTS)
+	$(foreach test_file, $(TESTS),											\
+		echo "\n[+] Testing $(test_file)";									\
+		$(CC) $(TESTFLAGS) $(INC) -c -o $(BUILDDIR)/test $(test_file);		\
+		$(CC) -o $(TESTTARGET) $(BUILDDIR)/test $(OBJECTS) $(LIB);			\
+		$(TESTTARGET);														\
+	)
 
 # Tests
 tester:
@@ -39,3 +53,4 @@ ticket:
 	$(CC) $(CFLAGS) spikes/ticket.c $(INC) $(LIB) -o bin/ticket
 
 .PHONY: clean
+.PHONY: test

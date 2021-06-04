@@ -49,7 +49,7 @@ int main(void)
 
         size_t size = string_size(string);
 
-        string_push_str(string, st, st_size);
+        string_push_str(string, st);
 
         assert(!string_empty(string));
         assert(string_size(string) == st_size + size);
@@ -64,6 +64,7 @@ int main(void)
         assert(string_size(string) == size);
     }
 
+    #ifndef AUTOMATIC_TESTING
     {
         string_get_till(string, stdin, 10, '\n');
         char_put('|', stdout);
@@ -74,6 +75,7 @@ int main(void)
         char_put('\n', stdout);
         string_clear(string);
     }
+    #endif
 
     {
         printf("%lu\t%lu\n", string_size(string), string_capacity(string));
