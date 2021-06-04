@@ -5,6 +5,7 @@ CC := gcc
 
 SRCDIR := src
 BUILDDIR := build
+LOGDIR := log
 
 TARGET := bin/main
 TESTTARGET := bin/test
@@ -34,14 +35,20 @@ $(BUILDDIR)/%.o: $(SRCDIR)/%.$(SRCEXT)
 
 clean:
 	@echo '[+] Cleaning'
-	$(RM) -rf -- $(BUILDDIR) $(TARGET)
+	$(RM) -rf -- $(BUILDDIR) $(LOGDIR) $(TARGET)
 
 test: $(OBJECTS)
+	@mkdir -p $(LOGDIR)
 	$(foreach test_file, $(TESTS),											\
 		echo "\n[+] Testing $(test_file)";									\
 		$(CC) $(TESTFLAGS) $(INC) -c -o $(BUILDDIR)/test $(test_file);		\
 		$(CC) -o $(TESTTARGET) $(BUILDDIR)/test $(OBJECTS) $(LIB);			\
-		$(TESTTARGET);														\
+		valgrind --leak-check=full \
+			--show-leak-kinds=all \
+			--track-origins=yes \
+			--verbose \
+			--log-file=$(LOGDIR)/$(shell echo -n $(test_file) | tr '/' '_' | tr -d '\n').log \
+			$(TESTTARGET); \
 	)
 
 # Tests
