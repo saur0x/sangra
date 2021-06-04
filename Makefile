@@ -10,7 +10,7 @@ BUILDDIR := build
 TARGET := bin/main
 
 SRCEXT := c
-SOURCES := $(shell find $(SRCDIR) -type f ! -name test.c -name *.$(SRCEXT))
+SOURCES := $(shell find $(SRCDIR) -type f ! -name test.c ! -name '_*' -name *.$(SRCEXT))
 OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.o))
 CFLAGS := -g -Wall
 LIB :=
