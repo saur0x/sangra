@@ -1,7 +1,9 @@
 CC := gcc
+AR := ar
 # CC := clang --analyze
 
 MAIN := main
+LIB := lib
 TEST := test
 
 SRCEXT := c
@@ -10,11 +12,12 @@ SRCEXT := c
 BINDIR := bin
 BUILDDIR := build
 INCLUDEDIR := include
+LIBDIR := lib
 SRCDIR := src
-TESTDIR := tests
+TESTDIR := test
 
 CFLAGS := -g -Wall
-LIBRARY := -lm
+LIBRARY :=
 INCLUDE := -iquote $(INCLUDEDIR)
 
 # Ignore $(MAIN).$(SRCEXT), test.c, and any $(SRCEXT) files starting with an underscore.
@@ -23,12 +26,10 @@ OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.o))
 
 .PHONY: clean test
 
+
 all: build
 
-build: $(OBJECTS) $(SRCDIR)/$(MAIN).$(SRCEXT)
-	@echo '[+] Building'
-	@mkdir -pv $(BINDIR)
-	$(CC) $(CFLAGS) $(INCLUDE) -o $(BINDIR)/$(MAIN) $^ $(LIBRARY)
+build: $(BINDIR)/$(MAIN)
 
 clean:
 	@echo '[+] Cleaning'
@@ -39,12 +40,33 @@ expand: $(SRCDIR)/$(MAIN).$(SRCEXT)
 	$(CC) $(INCLUDE) -E $^
 
 run: build
+	@echo '[+] Running'
 	@exec ./$(BINDIR)/$(MAIN)
 
-test: $(OBJECTS) $(TESTDIR)/$(TEST).$(SRCEXT)
+test: $(BINDIR)/$(TEST)
+
+# dynamic: $(LIBDIR)/$(LIB).so
+
+# static: $(LIBDIR)/$(LIB).a
+
+
+# $(LIBDIR)/$(LIB).so: $(OBJECTS)
+# 	@mkdir -pv $(LIBDIR)
+# 	$(CC) $(CFLAGS) $(INCLUDE) -fPIC -shared -o $@ $^ -lc
+
+# $(LIBDIR)/$(LIB).a: $(OBJECTS)
+# 	@mkdir -pv $(LIBDIR)
+# 	$(AR) rcs $@ $^ -lc
+
+$(BINDIR)/$(MAIN): $(SRCDIR)/$(MAIN).$(SRCEXT) $(OBJECTS)
+	@echo '[+] Building'
+	@mkdir -pv $(BINDIR)
+	$(CC) $(CFLAGS) $(INCLUDE) -o $@ $^ $(LIBRARY)
+
+$(BINDIR)/$(TEST): $(TESTDIR)/$(TEST).$(SRCEXT) $(OBJECTS)
 	@echo '[+] Testing'
 	@mkdir -pv $(BINDIR)
-	$(CC) $(CFLAGS) $(INCLUDE) -o $(BINDIR)/$(TEST) $^ $(LIBRARY)
+	$(CC) $(CFLAGS) $(INCLUDE) -o $@ $^ $(LIBRARY)
 
 $(BUILDDIR)/%.o: $(SRCDIR)/%.$(SRCEXT)
 	@echo '[+] Compiling'
