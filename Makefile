@@ -1,63 +1,52 @@
-# This is the main compiler
 CC := gcc
-# and comment out the linker last line for sanity
 # CC := clang --analyze
 
-SRCDIR := src
-BUILDDIR := build
-LOGDIR := log
-
-TARGET := bin/main
-TESTTARGET := bin/test
+MAIN := main
+TEST := test
 
 SRCEXT := c
 
-# Ignore test.c files and any files starting with an underscore.
-SOURCES := $(shell find $(SRCDIR) -type f ! -name test.c ! -name '_*' -name *.$(SRCEXT))
-OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.o))
-
-TESTS := $(shell find $(SRCDIR) -name test.$(SRCEXT))
+# Directories
+BINDIR := bin
+BUILDDIR := build
+INCLUDEDIR := include
+SRCDIR := src
+TESTDIR := tests
 
 CFLAGS := -g -Wall
-TESTFLAGS := -D AUTOMATIC_TESTING
+LIBRARY := -lm
+INCLUDE := -iquote $(INCLUDEDIR)
 
-LIB :=
-INC := -iquote include
+# Ignore $(MAIN).$(SRCEXT), test.c, and any $(SRCEXT) files starting with an underscore.
+SOURCES := $(shell find $(SRCDIR) -type f ! -name $(MAIN).$(SRCEXT) ! -name $(TEST).$(SRCEXT) ! -name _* -name *.$(SRCEXT))
+OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.o))
 
-$(TARGET): $(OBJECTS)
-	@echo '[+] Linking'
-	$(CC) -o $(TARGET) $^ $(LIB)
+.PHONY: clean test
 
-$(BUILDDIR)/%.o: $(SRCDIR)/%.$(SRCEXT)
-	@echo '[+] Compiling'
-	@mkdir -p $(shell dirname $@)
-	$(CC) $(CFLAGS) $(INC) -c -o $@ $<
+all: build
+
+build: $(OBJECTS) $(SRCDIR)/$(MAIN).$(SRCEXT)
+	@echo '[+] Building'
+	@mkdir -pv $(BINDIR)
+	$(CC) $(CFLAGS) $(INCLUDE) -o $(BINDIR)/$(MAIN) $^ $(LIBRARY)
 
 clean:
 	@echo '[+] Cleaning'
-	$(RM) -rf -- $(BUILDDIR) $(LOGDIR) $(TARGET)
+	$(RM) -rf -- $(BINDIR) $(BUILDDIR)
 
-test: $(OBJECTS)
-	@mkdir -p $(LOGDIR)
-	$(foreach test_file, $(TESTS),											\
-		echo "\n[+] Testing $(test_file)";									\
-		$(CC) $(TESTFLAGS) $(INC) -c -o $(BUILDDIR)/test $(test_file);		\
-		$(CC) -o $(TESTTARGET) $(BUILDDIR)/test $(OBJECTS) $(LIB);			\
-		valgrind --leak-check=full \
-			--show-leak-kinds=all \
-			--track-origins=yes \
-			--verbose \
-			--log-file=$(LOGDIR)/$(shell echo -n $(test_file) | tr '/' '_' | tr -d '\n').log \
-			$(TESTTARGET); \
-	)
+expand: $(SRCDIR)/$(MAIN).$(SRCEXT)
+	@echo '[+] Expanding'
+	$(CC) $(INCLUDE) -E $^
 
-# Tests
-tester:
-	$(CC) $(CFLAGS) test/test.c $(INC) $(LIB) -o bin/test
+run: build
+	@exec ./$(BINDIR)/$(MAIN)
 
-# Spikes
-ticket:
-	$(CC) $(CFLAGS) spikes/ticket.c $(INC) $(LIB) -o bin/ticket
+test: $(OBJECTS) $(TESTDIR)/$(TEST).$(SRCEXT)
+	@echo '[+] Testing'
+	@mkdir -pv $(BINDIR)
+	$(CC) $(CFLAGS) $(INCLUDE) -o $(BINDIR)/$(TEST) $^ $(LIBRARY)
 
-.PHONY: clean
-.PHONY: test
+$(BUILDDIR)/%.o: $(SRCDIR)/%.$(SRCEXT)
+	@echo '[+] Compiling'
+	@mkdir -pv $(shell dirname $@)
+	$(CC) $(CFLAGS) $(INCLUDE) -c -o $@ $<
