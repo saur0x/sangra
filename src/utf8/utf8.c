@@ -92,13 +92,12 @@ uint8_t utf8_is_valid(uint32_t bytes)
 
 
 /// Function implementation for macros with type checking.
-/// These should be used instead of macros when using outside this file.
+/// These functions should be used instead of macros when using outside this library.
 
-/**
-0 to D7FF16 and E00016 to 10FFFF16 inclusive
-*/
+
 uint8_t utf8_is_scalar(uint32_t code_point)
 {
+    // 0 to D7FF16 and E00016 to 10FFFF16 inclusive
     return UTF8_IS_SCALAR(code_point);
 }
 

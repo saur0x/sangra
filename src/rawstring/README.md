@@ -1,0 +1,1 @@
+A vector of `Char`s with similar interface to that of the `String` type.
